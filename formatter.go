@@ -1,4 +1,4 @@
-package main
+package reflected
 
 import (
 	"fmt"
@@ -10,13 +10,13 @@ import (
 const FunctionKey = "function"
 const LineKey = "line"
 
-type ReflectFormatter struct {
+type ReflectedFormatter struct {
 	ChildFormatter logrus.Formatter
 	LineNumber     bool
 }
 
 // Format the current log entry by adding the function name and line number of the caller.
-func (f *ReflectFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+func (f *ReflectedFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	function, line := f.getCurrentPosition(entry)
 
 	data := logrus.Fields{FunctionKey: function}
@@ -36,7 +36,7 @@ func (f *ReflectFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	return f.ChildFormatter.Format(entry)
 }
 
-func (f *ReflectFormatter) getCurrentPosition(entry *logrus.Entry) (string, string) {
+func (f *ReflectedFormatter) getCurrentPosition(entry *logrus.Entry) (string, string) {
 	skip := 6
 	if len(entry.Data) == 0 {
 		skip = 8
