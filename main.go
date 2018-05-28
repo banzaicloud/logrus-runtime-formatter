@@ -1,45 +1,9 @@
 package main
 
 import (
-	"runtime"
-
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
-
-//////
-
-type ReflectFormatter struct {
-	ChildFormatter logrus.Formatter
-}
-
-func (f *ReflectFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	frame := getCurrentFrame(entry)
-	fields := logrus.Fields{"function": frame.Function, "line": frame.Line}
-	newEntry := entry.WithFields(fields)
-	entry.Data = newEntry.Data
-	return f.ChildFormatter.Format(entry)
-}
-
-func getCurrentFrame(entry *logrus.Entry) *runtime.Frame {
-	skip := 6
-	if len(entry.Data) == 0 {
-		skip = 8
-	}
-	pc, _, _, _ := runtime.Caller(skip)
-	frames := runtime.CallersFrames([]uintptr{pc})
-	frame, _ := frames.Next()
-	return &frame
-}
-
-//////
-
-func init() {
-	textFormatter := prefixed.TextFormatter{}
-	textFormatter.FullTimestamp = true
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetFormatter(&ReflectFormatter{ChildFormatter: &textFormatter})
-}
 
 func bar() {
 	foo()
@@ -57,6 +21,11 @@ func foo() {
 }
 
 func main() {
+	textFormatter := prefixed.TextFormatter{}
+	textFormatter.FullTimestamp = true
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&ReflectFormatter{ChildFormatter: &textFormatter})
+
 	bar()
 	foo()
 }
