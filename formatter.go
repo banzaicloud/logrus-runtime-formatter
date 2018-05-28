@@ -7,6 +7,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const FunctionKey = "function"
+const LineKey = "line"
+
 type ReflectFormatter struct {
 	ChildFormatter logrus.Formatter
 	LineNumber     bool
@@ -16,16 +19,16 @@ type ReflectFormatter struct {
 func (f *ReflectFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	function, line := f.getCurrentPosition(entry)
 
-	fields := logrus.Fields{"function": function}
+	fields := logrus.Fields{FunctionKey: function}
 	if f.LineNumber {
-		fields["line"] = line
+		fields[LineKey] = line
 	}
 	newEntry := entry.WithFields(fields)
 	entry.Data = newEntry.Data
 
-	// entry.Data["function"] = function
+	// entry.Data[FunctionKey] = function
 	// if f.LineNumber {
-	// 	entry.Data["line"] = line
+	// 	entry.Data[LineKey] = line
 	// }
 
 	return f.ChildFormatter.Format(entry)
