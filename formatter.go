@@ -19,12 +19,14 @@ type ReflectFormatter struct {
 func (f *ReflectFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	function, line := f.getCurrentPosition(entry)
 
-	fields := logrus.Fields{FunctionKey: function}
+	data := logrus.Fields{FunctionKey: function}
 	if f.LineNumber {
-		fields[LineKey] = line
+		data[FunctionKey] = line
 	}
-	newEntry := entry.WithFields(fields)
-	entry.Data = newEntry.Data
+	for k, v := range entry.Data {
+		data[k] = v
+	}
+	entry.Data = data
 
 	// entry.Data[FunctionKey] = function
 	// if f.LineNumber {
