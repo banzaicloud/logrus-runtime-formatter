@@ -1,5 +1,5 @@
 # logrus-runtime-formatter
-Golang `runtime` based automatic function, line and package fields for logrus.
+Golang `runtime` package based automatic function, line and package fields for logrus.
 
 ## Usage
 
@@ -16,8 +16,8 @@ import (
 var log = logrus.New()
 
 func init() {
-    childFormatter := logrus.JSONFormatter{}
-    runtimeFormatter := &runtime.Formatter{ChildFormatter: &childFormatter}
+	childFormatter := logrus.JSONFormatter{}
+	runtimeFormatter := &runtime.Formatter{ChildFormatter: &childFormatter}
 	log.Formatter = runtimeFormatter
 	log.Level = logrus.DebugLevel
 }
