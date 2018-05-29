@@ -1,4 +1,4 @@
-package reflected
+package runtime
 
 import (
 	"fmt"
@@ -53,40 +53,40 @@ var errorFields = logrus.Fields{
 	"baz": fmt.Errorf("qux"),
 }
 
-func BenchmarkErrorReflectedAndTextFormatter(b *testing.B) {
-	doBenchmark(b, &ReflectedFormatter{ChildFormatter: &logrus.TextFormatter{DisableColors: true}}, errorFields)
+func BenchmarkErrorRuntimeAndTextFormatter(b *testing.B) {
+	doBenchmark(b, &Formatter{ChildFormatter: &logrus.TextFormatter{DisableColors: true}}, errorFields)
 }
 
 func BenchmarkErrorTextFormatter(b *testing.B) {
 	doBenchmark(b, &logrus.TextFormatter{DisableColors: true}, errorFields)
 }
 
-func BenchmarkSmallReflectedAndTextFormatter(b *testing.B) {
-	doBenchmark(b, &ReflectedFormatter{ChildFormatter: &logrus.TextFormatter{DisableColors: true}}, smallFields)
+func BenchmarkSmallRuntimeAndTextFormatter(b *testing.B) {
+	doBenchmark(b, &Formatter{ChildFormatter: &logrus.TextFormatter{DisableColors: true}}, smallFields)
 }
 
 func BenchmarkSmallTextFormatter(b *testing.B) {
 	doBenchmark(b, &logrus.TextFormatter{DisableColors: true}, smallFields)
 }
 
-func BenchmarkLargeReflectedAndTextFormatter(b *testing.B) {
-	doBenchmark(b, &ReflectedFormatter{ChildFormatter: &logrus.TextFormatter{DisableColors: true}}, largeFields)
+func BenchmarkLargeRuntimeAndTextFormatter(b *testing.B) {
+	doBenchmark(b, &Formatter{ChildFormatter: &logrus.TextFormatter{DisableColors: true}}, largeFields)
 }
 
 func BenchmarkLargeTextFormatter(b *testing.B) {
 	doBenchmark(b, &logrus.TextFormatter{DisableColors: true}, largeFields)
 }
 
-func BenchmarkSmallReflectedAndJSONFormatter(b *testing.B) {
-	doBenchmark(b, &ReflectedFormatter{ChildFormatter: &logrus.JSONFormatter{}}, smallFields)
+func BenchmarkSmallRuntimeAndJSONFormatter(b *testing.B) {
+	doBenchmark(b, &Formatter{ChildFormatter: &logrus.JSONFormatter{}}, smallFields)
 }
 
 func BenchmarkSmallJSONFormatter(b *testing.B) {
 	doBenchmark(b, &logrus.JSONFormatter{}, smallFields)
 }
 
-func BenchmarkLargeReflectedAndJSONFormatter(b *testing.B) {
-	doBenchmark(b, &ReflectedFormatter{ChildFormatter: &logrus.JSONFormatter{}}, largeFields)
+func BenchmarkLargeRuntimeAndJSONFormatter(b *testing.B) {
+	doBenchmark(b, &Formatter{ChildFormatter: &logrus.JSONFormatter{}}, largeFields)
 }
 
 func BenchmarkLargeJSONFormatter(b *testing.B) {
