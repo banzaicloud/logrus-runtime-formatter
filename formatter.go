@@ -43,7 +43,12 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		data[LineKey] = line
 	}
 	if f.Package {
-		data[PackageKey] = function[:packageEnd]
+		packageName := function[:packageEnd]
+		parenPosition := strings.LastIndex(packageName, "(")
+		if parenPosition != -1 {
+			packageName = packageName[:parenPosition-1]
+		}
+		data[PackageKey] = packageName
 	}
 	if f.File {
 		data[FileKey] = file
