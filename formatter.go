@@ -44,10 +44,10 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 	if f.Package {
 		packageName := function[:packageEnd]
-		parenPosition := strings.LastIndex(packageName, "(")
-		if parenPosition != -1 {
-			packageName = packageName[:parenPosition-1]
-		}
+		// parenPosition := strings.LastIndex(packageName, "(")
+		// if parenPosition != -1 {
+		// 	packageName = packageName[:parenPosition-1]
+		// }
 		data[PackageKey] = packageName
 	}
 	if f.File {
@@ -78,7 +78,7 @@ start:
 		goto start
 	}
 	if strings.HasPrefix(function, "runtime.call") {
-		skip -= 1
+		skip--
 		goto start
 	}
 	return function, file, lineNumber

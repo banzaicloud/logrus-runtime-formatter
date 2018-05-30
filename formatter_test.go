@@ -17,6 +17,16 @@ func bar() {
 	log.Infoln("Hello world from bar function!")
 }
 
+type A struct{}
+
+func (A) valueFunc() {
+	logrus.Infoln("Hello world from valueFunc function!")
+}
+
+func (*A) pointerFunc() {
+	logrus.Infoln("Hello world from pointerFunc function!")
+}
+
 func TestRuntimeFormatter(t *testing.T) {
 	buffer := bytes.NewBuffer(nil)
 
@@ -37,6 +47,14 @@ func TestRuntimeFormatter(t *testing.T) {
 	bar()
 
 	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "bar", "17")
+
+	A{}.valueFunc()
+
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.A", "valueFunc", "23")
+
+	(&A{}).pointerFunc()
+
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "pointerFunc", "27")
 }
 
 func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string, expectedFunction string, expectedLine string) {
