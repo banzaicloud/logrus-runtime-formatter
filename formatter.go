@@ -74,7 +74,7 @@ start:
 		lineNumber = fmt.Sprintf("%d", line)
 	}
 	function := runtime.FuncForPC(pc).Name()
-	if strings.HasPrefix(function, "github.com/sirupsen/logrus") {
+	if strings.LastIndex(function, "sirupsen/logrus.") != -1 {
 		skip++
 		// didLogrusJump = true
 		goto start

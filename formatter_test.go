@@ -16,6 +16,7 @@ func foo() {
 func bar() {
 	log := logrus.WithFields(logrus.Fields{"test": "field"})
 	log.Infoln("Hello world from bar function!")
+	log.Infof("Hello world from bar function!")
 }
 
 type A struct{}
@@ -52,23 +53,24 @@ func TestRuntimeFormatter(t *testing.T) {
 	bar()
 
 	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "bar", "18")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "bar", "19")
 
 	a := A{}
 
 	a.valueFunc()
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.A", "valueFunc", "24")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.A", "valueFunc", "25")
 
 	(&a).pointerFunc()
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "pointerFunc", "28")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "pointerFunc", "29")
 
 	switch method := reflect.ValueOf(&a).MethodByName("ReflectedFunc").Interface().(type) {
 	case func(string):
 		method("hello world")
 	}
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "ReflectedFunc", "32")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "ReflectedFunc", "33")
 }
 
 func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string, expectedFunction string, expectedLine string) {
