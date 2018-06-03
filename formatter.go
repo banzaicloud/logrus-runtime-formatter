@@ -62,10 +62,11 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func (f *Formatter) getCurrentPosition(entry *logrus.Entry) (string, string, string) {
-	skip := 6
+	skip := 5
 	if len(entry.Data) == 0 {
-		skip = 8
+		skip = 7
 	}
+	// didLogrusJump := false
 start:
 	pc, file, line, _ := runtime.Caller(skip)
 	lineNumber := ""
@@ -73,13 +74,19 @@ start:
 		lineNumber = fmt.Sprintf("%d", line)
 	}
 	function := runtime.FuncForPC(pc).Name()
-	if function == "reflect.callMethod" {
-		skip -= 2
+	if strings.HasPrefix(function, "github.com/sirupsen/logrus") {
+		skip++
+		// didLogrusJump = true
 		goto start
 	}
-	if strings.HasPrefix(function, "runtime.call") {
-		skip--
-		goto start
-	}
+	// if !didLogrusJump && function == "reflect.callMethod" {
+	// 	skip -= 2
+	// 	goto start
+	// }
+	// if !didLogrusJump && strings.HasPrefix(function, "runtime.call") {
+	// 	skip--
+	// 	println("shit")
+	// 	goto start
+	// }
 	return function, file, lineNumber
 }

@@ -3,13 +3,14 @@ package runtime
 import (
 	"bytes"
 	"encoding/json"
+	"reflect"
 	"testing"
 
 	"github.com/sirupsen/logrus"
 )
 
 func foo() {
-	logrus.Debugln("Hello world from foo function!")
+	logrus.Debug("Hello world from foo function!")
 }
 
 func bar() {
@@ -20,11 +21,15 @@ func bar() {
 type A struct{}
 
 func (A) valueFunc() {
-	logrus.Infoln("Hello world from valueFunc function!")
+	logrus.Print("Hello world from valueFunc function!")
 }
 
 func (*A) pointerFunc() {
-	logrus.Infoln("Hello world from pointerFunc function!")
+	logrus.Printf("Hello world from pointerFunc function!")
+}
+
+func (*A) ReflectedFunc(msg string) {
+	logrus.Printf("Hello world from ReflectedFunc function: %s", msg)
 }
 
 func TestRuntimeFormatter(t *testing.T) {
@@ -42,19 +47,28 @@ func TestRuntimeFormatter(t *testing.T) {
 
 	foo()
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "foo", "12")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "foo", "13")
 
 	bar()
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "bar", "17")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "bar", "18")
 
-	A{}.valueFunc()
+	a := A{}
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.A", "valueFunc", "23")
+	a.valueFunc()
 
-	(&A{}).pointerFunc()
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.A", "valueFunc", "24")
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "pointerFunc", "27")
+	(&a).pointerFunc()
+
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "pointerFunc", "28")
+
+	switch method := reflect.ValueOf(&a).MethodByName("ReflectedFunc").Interface().(type) {
+	case func(string):
+		method("hello world")
+	}
+
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "ReflectedFunc", "32")
 }
 
 func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string, expectedFunction string, expectedLine string) {
