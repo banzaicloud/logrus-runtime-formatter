@@ -20,6 +20,11 @@ const LineKey = "line"
 // FileKey holds the file field
 const FileKey = "file"
 
+const (
+	logrusStackJump          = 5
+	logrusFieldlessStackJump = 7
+)
+
 // Formatter decorates log entries with function name and package name (optional) and line number (optional)
 type Formatter struct {
 	ChildFormatter logrus.Formatter
@@ -44,10 +49,6 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 	if f.Package {
 		packageName := function[:packageEnd]
-		// parenPosition := strings.LastIndex(packageName, "(")
-		// if parenPosition != -1 {
-		// 	packageName = packageName[:parenPosition-1]
-		// }
 		data[PackageKey] = packageName
 	}
 	if f.File {
@@ -62,11 +63,10 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func (f *Formatter) getCurrentPosition(entry *logrus.Entry) (string, string, string) {
-	skip := 5
+	skip := logrusStackJump
 	if len(entry.Data) == 0 {
-		skip = 7
+		skip = logrusFieldlessStackJump
 	}
-	// didLogrusJump := false
 start:
 	pc, file, line, _ := runtime.Caller(skip)
 	lineNumber := ""
@@ -76,17 +76,7 @@ start:
 	function := runtime.FuncForPC(pc).Name()
 	if strings.LastIndex(function, "sirupsen/logrus.") != -1 {
 		skip++
-		// didLogrusJump = true
 		goto start
 	}
-	// if !didLogrusJump && function == "reflect.callMethod" {
-	// 	skip -= 2
-	// 	goto start
-	// }
-	// if !didLogrusJump && strings.HasPrefix(function, "runtime.call") {
-	// 	skip--
-	// 	println("shit")
-	// 	goto start
-	// }
 	return function, file, lineNumber
 }
