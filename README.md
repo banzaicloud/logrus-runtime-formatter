@@ -2,7 +2,11 @@
 
 [![CircleCI](https://circleci.com/gh/banzaicloud/logrus-runtime-formatter.svg?style=svg)](https://circleci.com/gh/banzaicloud/logrus-runtime-formatter)
 
-Golang `runtime` package based automatic function, line and package fields for logrus.
+Golang `runtime` package based automatic function, line and package fields for logrus. For further information and motivation behind the project please read this [post](https://banzaicloud.com/blog/runtime-logging/).
+
+### tl;dr:
+
+While we have been working on [Pipeline](https://github.com/banzaicloud/pipeline) we needed **function, package and line number information** to our log messages. We use Logrus and we could not find any similar extension so we have open sourced a Logrus runtime Formatter which **automatically tags log messages with runtime/stack information** without code modification.
 
 ## Usage
 
