@@ -39,6 +39,12 @@ func main() {
 ## Test
 `make test`
 
+```
+go test
+PASS
+ok  	github.com/banzaicloud/logrus-runtime-formatter	0.005s
+```
+
 ## Benchmark
 `make bench`
 
