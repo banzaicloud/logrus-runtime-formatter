@@ -1,4 +1,7 @@
 # logrus-runtime-formatter
+
+[![CircleCI](https://circleci.com/gh/banzaicloud/logrus-runtime-formatter.svg?style=svg)](https://circleci.com/gh/banzaicloud/logrus-runtime-formatter)
+
 Golang `runtime` package based automatic function, line and package fields for logrus.
 
 ## Usage
