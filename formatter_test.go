@@ -73,6 +73,25 @@ func TestRuntimeFormatter(t *testing.T) {
 	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter.(*A)", "ReflectedFunc", "33")
 }
 
+func TestFunctionInFunctionFormatter(t *testing.T) {
+	buffer := bytes.NewBuffer(nil)
+
+	childFormatter := logrus.JSONFormatter{}
+	formatter := &Formatter{ChildFormatter: &childFormatter}
+	formatter.Line = true
+	formatter.Package = true
+	logrus.SetFormatter(formatter)
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetOutput(buffer)
+
+	decoder := json.NewDecoder(buffer)
+
+	funcInFunc()
+
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "baz", "118")
+
+}
+
 func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string, expectedFunction string, expectedLine string) {
 	data := map[string]string{}
 	err := decoder.Decode(&data)
@@ -93,4 +112,12 @@ func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string,
 	if line != expectedLine {
 		t.Fatalf("Expected line: %s, got: %s", expectedLine, line)
 	}
+}
+
+func baz() {
+	logrus.Debug("Hello world from baz function!")
+}
+
+func funcInFunc() {
+	baz()
 }
