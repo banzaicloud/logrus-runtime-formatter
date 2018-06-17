@@ -21,7 +21,7 @@ const LineKey = "line"
 const FileKey = "file"
 
 const (
-	logrusStackJump          = 5
+	logrusStackJump          = 4
 	logrusFieldlessStackJump = 6
 )
 
