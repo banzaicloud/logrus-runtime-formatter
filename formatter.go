@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -34,6 +35,8 @@ type Formatter struct {
 	Package bool
 	// When true, file name will be tagged to fields as well
 	File bool
+	// When true, only base name of the file will be tagged to fields
+	BaseNameOnly bool
 }
 
 // Format the current log entry by adding the function name and line number of the caller.
@@ -52,7 +55,11 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		data[PackageKey] = packageName
 	}
 	if f.File {
-		data[FileKey] = file
+		if f.BaseNameOnly {
+			data[FileKey] = filepath.Base(file)
+		} else {
+			data[FileKey] = file
+		}
 	}
 	for k, v := range entry.Data {
 		data[k] = v
