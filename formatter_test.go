@@ -40,6 +40,8 @@ func TestRuntimeFormatter(t *testing.T) {
 	formatter := &Formatter{ChildFormatter: &childFormatter}
 	formatter.Line = true
 	formatter.Package = true
+	formatter.File = true
+	formatter.BaseNameOnly = true
 	logrus.SetFormatter(formatter)
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetOutput(buffer)
@@ -80,6 +82,8 @@ func TestFunctionInFunctionFormatter(t *testing.T) {
 	formatter := &Formatter{ChildFormatter: &childFormatter}
 	formatter.Line = true
 	formatter.Package = true
+	formatter.File = true
+	formatter.BaseNameOnly = true
 	logrus.SetFormatter(formatter)
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetOutput(buffer)
@@ -88,7 +92,7 @@ func TestFunctionInFunctionFormatter(t *testing.T) {
 
 	funcInFunc()
 
-	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "baz", "118")
+	expectFunction(t, decoder, "github.com/banzaicloud/logrus-runtime-formatter", "baz", "126")
 
 }
 
@@ -102,6 +106,7 @@ func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string,
 	_package := data[PackageKey]
 	function := data[FunctionKey]
 	line := data[LineKey]
+	file, _ := data[FileKey]
 
 	if _package != expectedPackage {
 		t.Fatalf("Expected package: %s, got: %s", expectedPackage, _package)
@@ -111,6 +116,9 @@ func expectFunction(t *testing.T, decoder *json.Decoder, expectedPackage string,
 	}
 	if line != expectedLine {
 		t.Fatalf("Expected line: %s, got: %s", expectedLine, line)
+	}
+	if len(file) > 0 && file != "formatter_test.go" {
+		t.Fatalf("Expected file: formatter_test.go, got: %s", file)
 	}
 }
 
